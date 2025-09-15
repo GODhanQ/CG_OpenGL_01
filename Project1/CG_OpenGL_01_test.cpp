@@ -6,12 +6,18 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 #include <random>
+#include <chrono>
 
-std::default_random_engine dre;
-std::uniform_int_distribution<int> uid(0, );
+auto seed = std::chrono::system_clock::now().time_since_epoch().count();
+std::default_random_engine dre(static_cast<unsigned int>(seed));
+std::uniform_int_distribution<int> uid(0, 255);
 
 GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
+
+float BackGround_CR{ 0.0 }, BackGround_CG{ 0.0 }, BackGround_CB{ 1.0 }, BackGround_CA{ 1.0 };
+
+void TimerFuntion(int value);
 
 void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정 { //--- 윈도우 생성하기
 {
@@ -32,13 +38,13 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정 { //--- 윈�
 	glutReshapeFunc(Reshape); // 다시 그리기 함수 지정
 
 	glutKeyboardFunc(Keyboard);
-
+	glutTimerFunc(TimerFunction);
 
 	glutMainLoop(); // 이벤트 처리 시작
 }
 
 GLvoid drawScene() { //--- 콜백 함수: 출력 콜백 함수
-	glClearColor(0.0f, 0.0f, 1.0f, 1.0f); // 바탕색을 ‘blue’로 지정
+	glClearColor(BackGround_CR, BackGround_CG, BackGround_CB, BackGround_CA); // 바탕색을 ‘blue’로 지정
 	glClear(GL_COLOR_BUFFER_BIT); // 설정된 색으로 전체를 칠하기
 	// 그리기 부분 구현: 그리기 관련 부분이 여기에 포함된다
 
@@ -49,26 +55,45 @@ GLvoid Reshape(int w, int h) { //--- 콜백 함수: 다시 그리기 콜백 함수
 	glViewport(0, 0, w, h);
 }
 
+void TimerFuntion(int value)
+{
+	glutPostRedisplay(); // 화면 재 출력
+	glutTimerFunc(100, TimerFuntion, 1); // 타이머함수 재 설정
+}
+
+
 void Keyboard(unsigned char key, int x, int y)
 {
 	switch (key) {
 	case 'c':
-		
+		BackGround_CR = 0.0;
+		BackGround_CG = 1.0;
+		BackGround_CB = 1.0;
 		break;
 	case 'm':
-		
+		BackGround_CR = 1.0;
+		BackGround_CG = 0.0;
+		BackGround_CB = 1.0;
 		break;
 	case 'y':
-		
+		BackGround_CR = 1.0;
+		BackGround_CG = 1.0;
+		BackGround_CB = 0.0;
 		break;
 	case 'a':
-		
+		BackGround_CR = static_cast<double>(uid(dre)) / 255.0;
+		BackGround_CG = static_cast<double>(uid(dre)) / 255.0;
+		BackGround_CB = static_cast<double>(uid(dre)) / 255.0;
 		break;
 	case 'w':
-		
+		BackGround_CR = 1.0;
+		BackGround_CG = 1.0;
+		BackGround_CB = 1.0;
 		break;
 	case 'k':
-		
+		BackGround_CR = 0.0;
+		BackGround_CG = 0.0;
+		BackGround_CB = 0.0;
 		break;
 	case 't':
 		
