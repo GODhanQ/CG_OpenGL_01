@@ -16,51 +16,61 @@ GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
 
 float BackGround_CR{ 0.0 }, BackGround_CG{ 0.0 }, BackGround_CB{ 1.0 }, BackGround_CA{ 1.0 };
+bool isTimerActive = false;
 
-void TimerFuntion(int value);
+void TimerFunction(int value);
+void SetRandomBackgroundColor();
+void Keyboard(unsigned char key, int x, int y);
 
-void main(int argc, char** argv) //--- ¿©µµøÏ √‚∑¬«œ∞Ì ƒ›πÈ«‘ºˆ º≥¡§ { //--- ¿©µµøÏ ª˝º∫«œ±‚
+void main(int argc, char** argv)
 {
-	glutInit(&argc, argv); // glut √ ±‚»≠
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA); // µΩ∫«√∑π¿Ã ∏µÂ º≥¡§
-	glutInitWindowPosition(100, 100); // ¿©µµøÏ¿« ¿ßƒ° ¡ˆ¡§
-	glutInitWindowSize(500, 500); // ¿©µµøÏ¿« ≈©±‚ ¡ˆ¡§
-	glutCreateWindow("Example1"); // ¿©µµøÏ ª˝º∫
+	glutInit(&argc, argv);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
+	glutInitWindowPosition(100, 100);
+	glutInitWindowSize(500, 500);
+	glutCreateWindow("Example1");
 
-	//--- GLEW √ ±‚»≠«œ±‚
+	
 	glewExperimental = GL_TRUE;
-	if (glewInit() != GLEW_OK) { // glew √ ±‚»≠ {
+	if (glewInit() != GLEW_OK) {
 		std::cerr << "Unable to initialize GLEW" << std::endl;
 		exit(EXIT_FAILURE);
 	}
 	else std::cout << "GLEW Initialized\n";
-	glutDisplayFunc(drawScene); // √‚∑¬ «‘ºˆ¿« ¡ˆ¡§
-	glutReshapeFunc(Reshape); // ¥ŸΩ√ ±◊∏Æ±‚ «‘ºˆ ¡ˆ¡§
+	glutDisplayFunc(drawScene);
+	glutReshapeFunc(Reshape);
 
 	glutKeyboardFunc(Keyboard);
-	glutTimerFunc(TimerFunction);
 
-	glutMainLoop(); // ¿Ã∫•∆Æ √≥∏Æ Ω√¿€
+	glutMainLoop();
 }
 
-GLvoid drawScene() { //--- ƒ›πÈ «‘ºˆ: √‚∑¬ ƒ›πÈ «‘ºˆ
-	glClearColor(BackGround_CR, BackGround_CG, BackGround_CB, BackGround_CA); // πŸ≈¡ªˆ¿ª °Æblue°Ø∑Œ ¡ˆ¡§
-	glClear(GL_COLOR_BUFFER_BIT); // º≥¡§µ» ªˆ¿∏∑Œ ¿¸√º∏¶ ƒ•«œ±‚
-	// ±◊∏Æ±‚ ∫Œ∫– ±∏«ˆ: ±◊∏Æ±‚ ∞¸∑√ ∫Œ∫–¿Ã ø©±‚ø° ∆˜«‘µ»¥Ÿ
+GLvoid drawScene() {
+	glClearColor(BackGround_CR, BackGround_CG, BackGround_CB, BackGround_CA);
+	glClear(GL_COLOR_BUFFER_BIT);
 
-	glutSwapBuffers(); // »≠∏Èø° √‚∑¬«œ±‚
+	glutSwapBuffers();
 }
 
-GLvoid Reshape(int w, int h) { //--- ƒ›πÈ «‘ºˆ: ¥ŸΩ√ ±◊∏Æ±‚ ƒ›πÈ «‘ºˆ
+GLvoid Reshape(int w, int h) {
 	glViewport(0, 0, w, h);
 }
 
-void TimerFuntion(int value)
+void TimerFunction(int value)
 {
-	glutPostRedisplay(); // »≠∏È ¿Á √‚∑¬
-	glutTimerFunc(100, TimerFuntion, 1); // ≈∏¿Ã∏”«‘ºˆ ¿Á º≥¡§
+	if (isTimerActive) {
+		SetRandomBackgroundColor();
+		glutPostRedisplay();
+		glutTimerFunc(5000, TimerFunction, 1); // 5Ï¥àÎßàÎã§ Î∞òÎ≥µ
+	}
 }
 
+void SetRandomBackgroundColor()
+{
+	BackGround_CR = static_cast<float>(uid(dre) / 255.0);
+	BackGround_CG = static_cast<float>(uid(dre) / 255.0);
+	BackGround_CB = static_cast<float>(uid(dre) / 255.0);
+}
 
 void Keyboard(unsigned char key, int x, int y)
 {
@@ -69,37 +79,47 @@ void Keyboard(unsigned char key, int x, int y)
 		BackGround_CR = 0.0;
 		BackGround_CG = 1.0;
 		BackGround_CB = 1.0;
+		glutPostRedisplay();
 		break;
 	case 'm':
 		BackGround_CR = 1.0;
 		BackGround_CG = 0.0;
 		BackGround_CB = 1.0;
+		glutPostRedisplay();
 		break;
 	case 'y':
 		BackGround_CR = 1.0;
 		BackGround_CG = 1.0;
 		BackGround_CB = 0.0;
+		glutPostRedisplay();
 		break;
 	case 'a':
-		BackGround_CR = static_cast<double>(uid(dre)) / 255.0;
-		BackGround_CG = static_cast<double>(uid(dre)) / 255.0;
-		BackGround_CB = static_cast<double>(uid(dre)) / 255.0;
+		SetRandomBackgroundColor();
+		glutPostRedisplay();
 		break;
 	case 'w':
 		BackGround_CR = 1.0;
 		BackGround_CG = 1.0;
 		BackGround_CB = 1.0;
+		glutPostRedisplay();
 		break;
 	case 'k':
 		BackGround_CR = 0.0;
 		BackGround_CG = 0.0;
 		BackGround_CB = 0.0;
+		glutPostRedisplay();
 		break;
 	case 't':
-		
+		if (!isTimerActive) {
+			isTimerActive = true;
+			glutTimerFunc(5000, TimerFunction, 1); // ÌÉÄÏù¥Î®∏ ÏãúÏûë
+		}
+		else {
+			isTimerActive = false; // ÌÉÄÏù¥Î®∏ Ï§ëÏßÄ
+		}
 		break;
 	case 's':
-		
+		isTimerActive = false;
 		break;
 	case 'q':
 		exit(0);

@@ -15,8 +15,16 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CG_OpenGL_01_test01.cpp">
+    <ClCompile Include="CG_OpenGL_01_test02.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="VarANDFunc.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="VarANDFunc.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
