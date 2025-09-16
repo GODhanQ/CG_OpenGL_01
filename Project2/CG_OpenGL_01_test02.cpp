@@ -8,9 +8,9 @@
 #include <iostream>
 #include <random>
 #include <chrono>
-#include "VarANDFunc.h"
+#include "VarANDFunc_test02.h"
 
-auto seed = std::chrono::system_clock::now().time_since_epoch().count();
+auto seed{ std::chrono::system_clock::now().time_since_epoch().count() };
 std::default_random_engine dre(static_cast<unsigned int>(seed));
 std::uniform_int_distribution<int> uid(0, 255);
 
@@ -107,9 +107,7 @@ void MouseClick(int button, int state, int x, int y)
 				ScaleRectangle(clickedRectIndex, -scale_amount);
 			}
 			else {
-				for (int i = 0; i < 4; ++i) {
-					ScaleRectangle(i, scale_amount);
-				}
+				ScaleRectangle(clickedBackRectIndex, scale_amount);
 			}
 		}
 

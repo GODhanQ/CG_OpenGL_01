@@ -8,7 +8,7 @@
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include "VarANDFunc.h"
+#include "VarANDFunc_test02.h"
 
 GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
