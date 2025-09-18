@@ -1,5 +1,5 @@
-#ifndef VARANDFUNC_H
-#endif VARANDFUNC_H
+#ifndef VARANDFUNC_TEST03_H
+#endif VARANDFUNC_TEST03_H
 
 #include "VarANDFunc_test03.h"
 

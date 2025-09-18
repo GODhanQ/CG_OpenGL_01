@@ -13,11 +13,9 @@
 #include <chrono>
 
 extern float BackGround_CR, BackGround_CG, BackGround_CB, BackGround_CA;
-extern int DraggingRectIndex;
 
-GLvoid drawScene();
-GLvoid Reshape(int w, int h);
+static std::vector<std::tuple<std::pair<float, float>, std::pair<float, float>, std::tuple<float, float, float>>> Rect_dir;
+
 void MouseClick(int button, int state, int x, int y);
 void Keyboard(unsigned char key, int x, int y);
 std::pair<float, float> ConvertMouseWxy2GLxy(int x, int y);
-void MouseDrag(int x, int y);
