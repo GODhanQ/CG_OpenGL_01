@@ -14,8 +14,8 @@
 
 static int constexpr Window_width{ 700 }, Window_height{ 700 };
 static std::vector<std::tuple<std::pair<float, float>, std::pair<float, float>, std::tuple<float, float, float>>> Rect_dir;
-// Ani_Rect_dir: bounds1, bounds2, color, movement_vector, size_change_vector_pair(width, height), path_history
-static std::vector<std::tuple<std::pair<float, float>, std::pair<float, float>, std::tuple<float, float, float>, std::pair<float, float>, std::pair<float, float>, std::deque<std::pair<float, float>>>> Ani_Rect_dir;
+// Ani_Rect_dir: bounds1, bounds2, color, movement_vector, size_change_vector_pair(width, height)
+static std::vector<std::tuple<std::pair<float, float>, std::pair<float, float>, std::tuple<float, float, float>, std::pair<float, float>, std::pair<float, float>>> Ani_Rect_dir;
 auto seed = std::chrono::system_clock::now().time_since_epoch().count();
 
 std::default_random_engine dre(static_cast<unsigned int>(seed));
@@ -27,7 +27,6 @@ std::uniform_real_distribution<float> uid_size_vect(0.001f, 0.005f);
 
 void Timer_Animation(int value);
 void Size_Change();
-void Following_Move();
 
 void main(int argc, char** argv)
 {
@@ -99,7 +98,7 @@ void MouseClick(int button, int state, int x, int y) {
 				static_cast<float>(uid_color(dre)) / 255.0f,
 				static_cast<float>(uid_color(dre)) / 255.0f);
 			Rect_dir.push_back({ {mouse_x - half_size, mouse_y + half_size}, {mouse_x + half_size, mouse_y - half_size}, Rect_color });
-			Ani_Rect_dir.push_back({ {mouse_x - half_size, mouse_y + half_size}, {mouse_x + half_size, mouse_y - half_size}, Rect_color, {0.0f, 0.0f}, {uid_size_vect(dre), uid_size_vect(dre)}, {} });
+			Ani_Rect_dir.push_back({ {mouse_x - half_size, mouse_y + half_size}, {mouse_x + half_size, mouse_y - half_size}, Rect_color, {0.0f, 0.0f}, {uid_size_vect(dre), uid_size_vect(dre)} });
 			std::cout << "Rect created at (" << mouse_x << ", " << mouse_y << ") with color ("
 				<< std::get<0>(Rect_color) << ", " << std::get<1>(Rect_color) << ", " << std::get<2>(Rect_color) << ")" << std::endl;
 		}
@@ -110,14 +109,10 @@ void MouseClick(int button, int state, int x, int y) {
 }
 void Keyboard(unsigned char key, int x, int y) {
 	bool is_any_animation_running = position1_moving || position2_moving || size_changing || following_moving;
-	if (Rect_dir.empty() && (key == '1' || key == '2' || key == '3' || key == '4' ||key == '5')) {
-		std::cout << "No rectangles to animate. Please create rectangles first." << std::endl;
-		return;
-	}
 
 	switch (key) {
 	case '1':
-		if (!position2_moving && !following_moving) {
+		if (!position2_moving && !following_moving) { // size_changing과는 동시 실행 허용
 			position1_moving = !position1_moving;
 			std::cout << "Position 1 moving: " << (position1_moving ? "ON" : "OFF") << std::endl;
 
@@ -136,12 +131,13 @@ void Keyboard(unsigned char key, int x, int y) {
 
 		break;
 	case '2':
-		if (!position1_moving && !following_moving) {
+		if (!position1_moving && !following_moving) { // size_changing과는 동시 실행 허용
 			position2_moving = !position2_moving;
 			std::cout << "Position 2 moving: " << (position2_moving ? "ON" : "OFF") << std::endl;
 
 			if (position2_moving) {
 				if (last_key == 'm' || !is_any_animation_running) {
+					// 위치는 0.5초마다 바뀌므로 초기 속도는 0으로 설정
 					for (auto& ani_rect : Ani_Rect_dir) {
 						std::get<3>(ani_rect) = { 0.0f, 0.0f };
 					}
@@ -156,11 +152,16 @@ void Keyboard(unsigned char key, int x, int y) {
 
 		break;
 	case '3':
-		size_changing = !size_changing;
-		std::cout << "Size changing: " << (size_changing ? "ON" : "OFF") << std::endl;
+		if (!position1_moving && !position2_moving && !following_moving) { // 다른 애니메이션과 동시 실행 가능
+			size_changing = !size_changing;
+			std::cout << "Size changing: " << (size_changing ? "ON" : "OFF") << std::endl;
 
-		if (size_changing && !is_any_animation_running) {
-			glutTimerFunc(10, Timer_Animation, 3);
+			if (size_changing && !is_any_animation_running) {
+				glutTimerFunc(10, Timer_Animation, 3);
+			}
+		}
+		else {
+			std::cout << "Cannot enable Size changing while other animations are active." << std::endl;
 		}
 		break;
 	case '4':
@@ -171,27 +172,6 @@ void Keyboard(unsigned char key, int x, int y) {
 				static_cast<float>(uid_color(dre)) / 255.0f);
 		}
 		std::cout << "All rectangle colors changed." << std::endl;
-		break;
-	case '5':
-		if (!position1_moving && !position2_moving) {
-			following_moving = !following_moving;
-			std::cout << "Following moving: " << (following_moving ? "ON" : "OFF") << std::endl;
-
-			if (following_moving) {
-				for (auto& ani_rect : Ani_Rect_dir) {
-					std::get<3>(ani_rect) = { 0.0f, 0.0f };
-					std::get<5>(ani_rect).clear();
-				}
-				if (!Ani_Rect_dir.empty()) {
-					std::get<3>(Ani_Rect_dir[0]) = { uid_movment_vect(dre), uid_movment_vect(dre) };
-				}
-				glutTimerFunc(10, Timer_Animation, 4);
-			}
-		}
-		else {
-			std::cout << "Cannot enable Following moving while other animations are active." << std::endl;
-		}
-
 		break;
 	case 's':
 		position1_moving = false;
@@ -213,7 +193,7 @@ void Keyboard(unsigned char key, int x, int y) {
 
 		Ani_Rect_dir.clear();
 		for (const auto& rect : Rect_dir) {
-			Ani_Rect_dir.push_back({ std::get<0>(rect), std::get<1>(rect), std::get<2>(rect), {0.0f, 0.0f}, {uid_size_vect(dre), uid_size_vect(dre)}, {} });
+			Ani_Rect_dir.push_back({ std::get<0>(rect), std::get<1>(rect), std::get<2>(rect), {0.0f, 0.0f}, {uid_size_vect(dre), uid_size_vect(dre)} });
 		}
 
 		glutPostRedisplay();
@@ -258,10 +238,6 @@ void Timer_Animation(int value) {
 		Position2_Move();
 		is_any_animation_running = true;
 	}
-	else if (following_moving) {
-		Following_Move();
-		is_any_animation_running = true;
-	}
 
 	if (size_changing) {
 		Size_Change();
@@ -270,7 +246,7 @@ void Timer_Animation(int value) {
 
 	if (is_any_animation_running) {
 		glutPostRedisplay();
-		glutTimerFunc(10, Timer_Animation, 0);
+		glutTimerFunc(10, Timer_Animation, 0); // value는 더 이상 중요하지 않음
 	}
 }
 
@@ -298,74 +274,17 @@ void Position2_Move() {
 	Position1_Move();
 }
 
-void Following_Move() {
-	if (Ani_Rect_dir.empty()) return;
-
-	const int delay = 50;
-	{
-		auto& leader = Ani_Rect_dir[0];
-		auto& bounds1 = std::get<0>(leader);
-		auto& bounds2 = std::get<1>(leader);
-		auto& movement = std::get<3>(leader);
-		auto& history = std::get<5>(leader);
-
-		bounds1.first += movement.first * moving_amount;
-		bounds1.second += movement.second * moving_amount;
-		bounds2.first += movement.first * moving_amount;
-		bounds2.second += movement.second * moving_amount;
-		
-		if (bounds1.first < -1.0f || bounds2.first > 1.0f) {
-			movement.first = -movement.first;
-		}
-		if (bounds1.second > 1.0f || bounds2.second < -1.0f) {
-			movement.second = -movement.second;
-		}
-
-		float centerX = (bounds1.first + bounds2.first) / 2.0f;
-		float centerY = (bounds1.second + bounds2.second) / 2.0f;
-		history.push_front({ centerX, centerY });
-
-		if (history.size() > Ani_Rect_dir.size() * delay) {
-			history.pop_back();
-		}
-	}
-
-	for (size_t i = 1; i < Ani_Rect_dir.size(); ++i) {
-		auto& follower = Ani_Rect_dir[i];
-		auto& predecessor = Ani_Rect_dir[i - 1];
-
-		auto& pred_history = std::get<5>(predecessor);
-
-		if (pred_history.size() > delay) {
-			std::pair<float, float> target_pos = pred_history[delay];
-
-			auto& bounds1 = std::get<0>(follower);
-			auto& bounds2 = std::get<1>(follower);
-
-			float half_width = (bounds2.first - bounds1.first) / 2.0f;
-			float half_height = (bounds1.second - bounds2.second) / 2.0f;
-
-			bounds1 = { target_pos.first - half_width, target_pos.second + half_height };
-			bounds2 = { target_pos.first + half_width, target_pos.second - half_height };
-
-			auto& own_history = std::get<5>(follower);
-			own_history.push_front(target_pos);
-			if (own_history.size() > delay + 1) {
-				own_history.pop_back();
-			}
-		}
-	}
-}
-
 void Size_Change() {
 	for (auto& ani_rect : Ani_Rect_dir) {
 		auto& Rect_Bounds1 = std::get<0>(ani_rect);
 		auto& Rect_Bounds2 = std::get<1>(ani_rect);
 		auto& size_vect_pair = std::get<4>(ani_rect);
 
+		// 너비 변경
 		Rect_Bounds1.first -= size_vect_pair.first;
 		Rect_Bounds2.first += size_vect_pair.first;
 
+		// 높이 변경
 		Rect_Bounds1.second += size_vect_pair.second;
 		Rect_Bounds2.second -= size_vect_pair.second;
 

@@ -11,11 +11,20 @@
 #include <iostream>
 #include <random>
 #include <chrono>
+#include <deque>
 
+extern bool position1_moving, position2_moving, size_changing, following_moving;
 extern float BackGround_CR, BackGround_CG, BackGround_CB, BackGround_CA;
+extern float moving_amount;
+extern unsigned char last_key;
 
-static std::vector<std::tuple<std::pair<float, float>, std::pair<float, float>, std::tuple<float, float, float>>> Rect_dir;
-
+GLvoid drawScene();
+GLvoid Reshape(int w, int h);
 void MouseClick(int button, int state, int x, int y);
 void Keyboard(unsigned char key, int x, int y);
 std::pair<float, float> ConvertMouseWxy2GLxy(int x, int y);
+void Timer_Animation(int value);
+void Position1_Move();
+void Position2_Move();
+void Following_Move();
+void Randomize_Movement_Vectors(int value);
