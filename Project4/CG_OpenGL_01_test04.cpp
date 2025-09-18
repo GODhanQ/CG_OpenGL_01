@@ -350,7 +350,7 @@ void Following_Move() {
 
 			auto& own_history = std::get<5>(follower);
 			own_history.push_front(target_pos);
-			if (own_history.size() > delay + 1) {
+			if (own_history.size() > static_cast<unsigned long long>(delay) + 1) {
 				own_history.pop_back();
 			}
 		}
