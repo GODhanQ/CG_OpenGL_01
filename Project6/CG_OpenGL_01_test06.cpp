@@ -154,8 +154,15 @@ void CreateParticleAt(float mouse_x, float mouse_y) {
 					// 4. 이동 벡터(move_vec) 계산 : 클릭한 위치-> 작은 사각형 origin
 					float move_x = mid_x - mouse_x;
 					float move_y = mid_y - mouse_y;
-					move_x *= 0.1f; // 속도 조절
-					move_y *= 0.1f; // 속도 조절
+					move_x *= 0.1f;
+					move_y *= 0.1f;
+					// 근데 파티클들이 서로 너무 멀리 떨어져서 날아감.
+					// 그래서 이동 벡터의 크기를 일정하게 맞춰주자.
+					float length = std::sqrt(move_x * move_x + move_y * move_y);
+					if (length != 0.0f) {
+						move_x = (move_x / length) * 0.02f; // 원하는 일정한 크기
+						move_y = (move_y / length) * 0.02f; // 원하는 일정한 크기
+					}
 
 					// 5. 크기 조절 벡터 : 일정하게 작아지도록
 					float scale_xy = increase_scale_amount;
