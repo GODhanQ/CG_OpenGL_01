@@ -169,7 +169,12 @@ void Keyboard(unsigned char key, int x, int y) {
 			Rect_color = std::make_tuple(static_cast<float>(uid_color(dre)) / 255.0f,
 				static_cast<float>(uid_color(dre)) / 255.0f,
 				static_cast<float>(uid_color(dre)) / 255.0f);
+			auto& Ani_Rect_color = std::get<2>(Ani_Rect_dir[i]);
+			Ani_Rect_color = std::make_tuple(static_cast<float>(uid_color(dre)) / 255.0f,
+				static_cast<float>(uid_color(dre)) / 255.0f,
+				static_cast<float>(uid_color(dre)) / 255.0f);
 		}
+		glutPostRedisplay();
 		std::cout << "All rectangle colors changed." << std::endl;
 		break;
 	case '5':
