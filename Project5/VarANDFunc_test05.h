@@ -17,6 +17,7 @@ extern float const BackGround_CR, BackGround_CG, BackGround_CB, BackGround_CA;
 extern bool mouse_release, left_click_mod, right_click_mod;
 extern float spread_rect_size;
 extern float eraser_half_size;
+extern float const increment_size;
 
 void drawScene();
 GLvoid Reshape(int w, int h);
