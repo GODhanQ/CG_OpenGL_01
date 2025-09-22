@@ -145,7 +145,7 @@ void CreateParticleAt(float mouse_x, float mouse_y) {
 					float y2 = y1 - cell_height;
 
 					// 2. 컬러 복사
-					auto particle_color = original_color;
+					auto& particle_color = original_color;
 
 					// 3. 작은 사각형의 중심(origin) 계산
 					float mid_x = (x1 + x2) / 2.0f;
@@ -154,14 +154,12 @@ void CreateParticleAt(float mouse_x, float mouse_y) {
 					// 4. 이동 벡터(move_vec) 계산 : 클릭한 위치-> 작은 사각형 origin
 					float move_x = mid_x - mouse_x;
 					float move_y = mid_y - mouse_y;
-					move_x *= 0.1f;
-					move_y *= 0.1f;
 					// 근데 파티클들이 서로 너무 멀리 떨어져서 날아감.
 					// 그래서 이동 벡터의 크기를 일정하게 맞춰주자.
 					float length = std::sqrt(move_x * move_x + move_y * move_y);
 					if (length != 0.0f) {
-						move_x = (move_x / length) * 0.02f; // 원하는 일정한 크기
-						move_y = (move_y / length) * 0.02f; // 원하는 일정한 크기
+						move_x = (move_x / length) * 0.02f;
+						move_y = (move_y / length) * 0.02f;
 					}
 
 					// 5. 크기 조절 벡터 : 일정하게 작아지도록
@@ -175,6 +173,7 @@ void CreateParticleAt(float mouse_x, float mouse_y) {
 			break;
 		}
 	}
+
 	glutPostRedisplay();
 }
 void ParticleUpdate()
@@ -199,7 +198,6 @@ void ParticleUpdate()
 			Rect_Bounds2.second += Move_vec.second;
 			Origin.first += Move_vec.first;
 			Origin.second += Move_vec.second;
-
 
 			// 2. 크기 조절
 			Rect_Bounds1.first += Scale_vec.first;
