@@ -20,3 +20,4 @@ GLvoid Reshape(int w, int h);
 void MouseClick(int button, int state, int x, int y);
 void Keyboard(unsigned char key, int x, int y);
 std::pair<float, float> ConvertMouseWxy2GLxy(int x, int y);
+void CreateParticleAt(float mouse_x, float mouse_y);
