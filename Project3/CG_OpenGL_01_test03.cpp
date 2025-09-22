@@ -67,8 +67,6 @@ void MouseDrag(int x, int y) {
 	std::get<0>(Rect_dir[DraggingRectIndex]).second = mouse_y + half_size_Y;
 	std::get<1>(Rect_dir[DraggingRectIndex]).second = mouse_y - half_size_Y;
 
-
-
 	glutPostRedisplay();
 }
 
