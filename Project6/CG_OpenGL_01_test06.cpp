@@ -1,7 +1,6 @@
 #include "VarANDFunc_test06.h"
 
 static const int Window_width{ 900 }, Window_height{ 700 };
-
 auto seed = std::chrono::system_clock::now().time_since_epoch().count();
 
 std::default_random_engine dre(static_cast<unsigned int>(seed));
@@ -48,6 +47,13 @@ GLvoid drawScene() {
 		glColor3f(std::get<0>(Rect_color), std::get<1>(Rect_color), std::get<2>(Rect_color));
 		glRectf(Rect_Bounds1.first, Rect_Bounds1.second, Rect_Bounds2.first, Rect_Bounds2.second);
 	}
+	for(int i = 0;i < Particle_Rect_dir.size(); ++i){
+		auto Rect_color{ std::get<2>(Particle_Rect_dir[i]) };
+		auto& Rect_Bounds1{ std::get<0>(Particle_Rect_dir[i]) };
+		auto& Rect_Bounds2{ std::get<1>(Particle_Rect_dir[i]) };
+		glColor3f(std::get<0>(Rect_color), std::get<1>(Rect_color), std::get<2>(Rect_color));
+		glRectf(Rect_Bounds1.first, Rect_Bounds1.second, Rect_Bounds2.first, Rect_Bounds2.second);
+	}
 
 	glutSwapBuffers();
 }
@@ -64,9 +70,11 @@ void MouseClick(int button, int state, int x, int y) {
 		float mouse_x = ogl_xy.first;
 		float mouse_y = ogl_xy.second;
 		
+		// particle creation
 		CreateParticleAt(mouse_x, mouse_y);
 
 		// particle update
+		ParticleUpdate();
 
 		glutPostRedisplay();
 	}
@@ -104,6 +112,16 @@ void Keyboard(unsigned char key, int x, int y) {
 	case 'q':
 		exit(0);
 	}
+}
+
+std::pair<float, float> ConvertMouseWxy2GLxy(int x, int y) {
+	int width = glutGet(GLUT_WINDOW_WIDTH);
+	int height = glutGet(GLUT_WINDOW_HEIGHT);
+
+	float ogl_x = (2.0f * x) / width - 1.0f;
+	float ogl_y = 1.0f - (2.0f * y) / height;
+
+	return { ogl_x, ogl_y };
 }
 
 void CreateParticleAt(float mouse_x, float mouse_y) {
@@ -146,6 +164,40 @@ void CreateParticleAt(float mouse_x, float mouse_y) {
 
 			Rect_dir.erase(Rect_dir.begin() + i);
 			break;
+		}
+	}
+}
+void ParticleUpdate()
+{
+	if (Particle_Rect_dir.size() > 0) {
+		for (int i = 0; i < Particle_Rect_dir.size(); ++i) {
+			auto& Rect_Bounds1 = std::get<0>(Particle_Rect_dir[i]);
+			auto& Rect_Bounds2 = std::get<1>(Particle_Rect_dir[i]);
+			auto& Origin = std::get<3>(Particle_Rect_dir[i]);
+			auto& Move_vec = std::get<4>(Particle_Rect_dir[i]);
+			auto& Scale_vec = std::get<5>(Particle_Rect_dir[i]);
+
+			// 1. 이동
+			Rect_Bounds1.first += Move_vec.first;
+			Rect_Bounds1.second += Move_vec.second;
+			Rect_Bounds2.first += Move_vec.first;
+			Rect_Bounds2.second += Move_vec.second;
+			Origin.first += Move_vec.first;
+			Origin.second += Move_vec.second;
+
+			// 2. 크기 조절
+			Rect_Bounds1.first += Scale_vec.first;
+			Rect_Bounds1.second -= Scale_vec.second;
+			Rect_Bounds2.first -= Scale_vec.first;
+			Rect_Bounds2.second += Scale_vec.second;
+
+			// 3. 사라짐
+			if (Rect_Bounds2.first <= Rect_Bounds1.first || Rect_Bounds1.second <= Rect_Bounds2.second) {
+				std::cout << "Particle at index " << i << " disappeared." << std::endl;
+				Particle_Rect_dir.erase(Particle_Rect_dir.begin() + i);
+				--i; // Adjust index after erasure
+			}
+			glutPostRedisplay();
 		}
 	}
 }
