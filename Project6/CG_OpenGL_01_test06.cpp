@@ -47,6 +47,9 @@ GLvoid drawScene() {
 		glColor3f(std::get<0>(Rect_color), std::get<1>(Rect_color), std::get<2>(Rect_color));
 		glRectf(Rect_Bounds1.first, Rect_Bounds1.second, Rect_Bounds2.first, Rect_Bounds2.second);
 	}
+
+	// particle update
+	ParticleUpdate();
 	for(int i = 0;i < Particle_Rect_dir.size(); ++i){
 		auto Rect_color{ std::get<2>(Particle_Rect_dir[i]) };
 		auto& Rect_Bounds1{ std::get<0>(Particle_Rect_dir[i]) };
@@ -72,9 +75,6 @@ void MouseClick(int button, int state, int x, int y) {
 		
 		// particle creation
 		CreateParticleAt(mouse_x, mouse_y);
-
-		// particle update
-		ParticleUpdate();
 
 		glutPostRedisplay();
 	}
@@ -154,9 +154,11 @@ void CreateParticleAt(float mouse_x, float mouse_y) {
 					// 4. 이동 벡터(move_vec) 계산 : 클릭한 위치-> 작은 사각형 origin
 					float move_x = mid_x - mouse_x;
 					float move_y = mid_y - mouse_y;
+					move_x *= 0.1f; // 속도 조절
+					move_y *= 0.1f; // 속도 조절
 
 					// 5. 크기 조절 벡터 : 일정하게 작아지도록
-					float scale_xy = -increase_scale_amount;
+					float scale_xy = increase_scale_amount;
 
 					Particle_Rect_dir.push_back({ {x1, y1}, {x2, y2}, particle_color, {mid_x, mid_y}, {move_x, move_y}, {scale_xy, scale_xy} });
 				}
@@ -166,6 +168,7 @@ void CreateParticleAt(float mouse_x, float mouse_y) {
 			break;
 		}
 	}
+	glutPostRedisplay();
 }
 void ParticleUpdate()
 {
