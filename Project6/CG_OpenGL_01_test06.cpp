@@ -1,6 +1,6 @@
 #include "VarANDFunc_test06.h"
 
-static const int Window_width{ 900 }, Window_height{ 700 };
+static const int Window_width{ 900 }, Window_height{ 900 };
 auto seed = std::chrono::system_clock::now().time_since_epoch().count();
 
 std::default_random_engine dre(static_cast<unsigned int>(seed));
@@ -16,7 +16,7 @@ void main(int argc, char** argv)
 {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
-	glutInitWindowPosition(100, 100);
+	glutInitWindowPosition(300, 100);
 	glutInitWindowSize(Window_width, Window_height);
 	glutCreateWindow("Example3");
 
@@ -125,7 +125,7 @@ std::pair<float, float> ConvertMouseWxy2GLxy(int x, int y) {
 }
 
 void CreateParticleAt(float mouse_x, float mouse_y) {
-	for (int i = 0; i < Rect_dir.size(); ++i) {
+	for (int i = Rect_dir.size() - 1; i >= 0; --i) {
 		auto& Rect_Bounds1{ std::get<0>(Rect_dir[i]) };
 		auto& Rect_Bounds2{ std::get<1>(Rect_dir[i]) };
 		if (mouse_x >= Rect_Bounds1.first && mouse_x <= Rect_Bounds2.first &&
