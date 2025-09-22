@@ -13,6 +13,7 @@
 #include <chrono>
 
 extern float BackGround_CR, BackGround_CG, BackGround_CB, BackGround_CA;
+extern float const increase_scale_amount;
 
 GLvoid drawScene();
 GLvoid Reshape(int w, int h);

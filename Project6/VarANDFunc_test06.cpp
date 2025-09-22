@@ -4,3 +4,4 @@
 #include "VarANDFunc_test06.h"
 
 float BackGround_CR{ 1.0 }, BackGround_CG{ 1.0 }, BackGround_CB{ 1.0 }, BackGround_CA{ 1.0 };
+float const increase_scale_amount{ 0.02f };
