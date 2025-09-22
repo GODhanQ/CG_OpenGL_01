@@ -189,6 +189,8 @@ void ParticleUpdate()
 
 			// 중력 효과 추가
 			Move_vec.second -= 0.00098f;
+			// 속도 감소 효과 추가 (마찰력)
+			Move_vec.first *= 0.99f;
 			
 			// 1. 이동
 			Rect_Bounds1.first += Move_vec.first;
