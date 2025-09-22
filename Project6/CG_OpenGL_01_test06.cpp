@@ -187,6 +187,9 @@ void ParticleUpdate()
 			auto& Move_vec = std::get<4>(Particle_Rect_dir[i]);
 			auto& Scale_vec = std::get<5>(Particle_Rect_dir[i]);
 
+			// 중력 효과 추가
+			Move_vec.second -= 0.00098f;
+			
 			// 1. 이동
 			Rect_Bounds1.first += Move_vec.first;
 			Rect_Bounds1.second += Move_vec.second;
@@ -194,6 +197,7 @@ void ParticleUpdate()
 			Rect_Bounds2.second += Move_vec.second;
 			Origin.first += Move_vec.first;
 			Origin.second += Move_vec.second;
+
 
 			// 2. 크기 조절
 			Rect_Bounds1.first += Scale_vec.first;
